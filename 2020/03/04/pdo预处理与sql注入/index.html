@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="web安全," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="问题起因：pdo预处理后就可以完全防范sql注入嘛？ 在特定情况不可以 为什么使用pdo预处理能有效的防止sql注入？首先知道sql注入的产生是因为对用户可控的参数没有经过有效的过滤拼接在查询语句后，使该查询语句的语法结构（比如形容词变成了动词）发生了改变，导致恶意操作可以使数据库信息泄露甚至可以提权。 pdo的预处理（非模拟编译情况下）： 123$query=&amp;quot;select passw">
+<meta name="keywords" content="web安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pdo预处理与sql注入">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5&#x2F;index.html">
+<meta property="og:site_name" content="J.I">
+<meta property="og:description" content="问题起因：pdo预处理后就可以完全防范sql注入嘛？ 在特定情况不可以 为什么使用pdo预处理能有效的防止sql注入？首先知道sql注入的产生是因为对用户可控的参数没有经过有效的过滤拼接在查询语句后，使该查询语句的语法结构（比如形容词变成了动词）发生了改变，导致恶意操作可以使数据库信息泄露甚至可以提权。 pdo的预处理（非模拟编译情况下）： 123$query=&amp;quot;select passw">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;1.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;2.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;3.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;4.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C5.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C6.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C7.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C8.png">
+<meta property="og:updated_time" content="2020-03-04T09:57:32.937Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/04/pdo预处理与sql注入/"/>
+
+
+
+
+
+  <title>pdo预处理与sql注入 | J.I</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">J.I</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/04/pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="J.I">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/iu1.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="J.I">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">pdo预处理与sql注入</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-04T17:42:56+08:00">
+                2020-03-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>问题起因：pdo预处理后就可以完全防范sql注入嘛？</p>
+<p>在特定情况不可以</p>
+<h5 id="为什么使用pdo预处理能有效的防止sql注入？"><a href="#为什么使用pdo预处理能有效的防止sql注入？" class="headerlink" title="为什么使用pdo预处理能有效的防止sql注入？"></a>为什么使用pdo预处理能有效的防止sql注入？</h5><p>首先知道sql注入的产生是因为对用户可控的参数没有经过有效的过滤拼接在查询语句后，使该查询语句的语法结构（比如形容词变成了动词）发生了改变，导致恶意操作可以使数据库信息泄露甚至可以提权。</p>
+<p>pdo的预处理（非模拟编译情况下）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$query=&quot;select password from pikachu where name=:name&quot;;</span><br><span class="line">$row=$db-&gt;prepare($query);</span><br><span class="line">$row-&gt;execute(:name=&gt;$_GET[&apos;name&apos;]);</span><br></pre></td></tr></table></figure>
+
+<p>prepare将查询语句的语法结构传给了mysql，mysql解析后形成固定的语法结构</p>
+<p>execute发送一条sql给mysql服务器，mysql不会解析这条语句，只会把里面的参数当作纯参数，所以传入的任何值都只是会被当作值对待，从而防治sql注入，那二次注入如何防？（后面讲到）</p>
+<h5 id="什么情况下pdo预处理有可能出现问题？"><a href="#什么情况下pdo预处理有可能出现问题？" class="headerlink" title="什么情况下pdo预处理有可能出现问题？"></a>什么情况下pdo预处理有可能出现问题？</h5><p>pdo与安全问题相关的设置有三个：</p>
+<blockquote>
+<p>​    PDO::ATTR_EMULATE_PREPARES//模拟预编译</p>
+<p>​    PDO::ATTR_ERRMODE//报错</p>
+<p>​    PDO::MYSQL_ATTR_MULTI_STATEMENTS//多句执行</p>
+</blockquote>
+<p>pdo默认的设置是：允许多句执行和模拟预编译的。</p>
+<h6 id="什么是模拟预编译？"><a href="#什么是模拟预编译？" class="headerlink" title="什么是模拟预编译？"></a>什么是模拟预编译？</h6><p>因为有些数据库（如SQLite）不支持预编译功能，所以默认使用sql拼接来模拟预编译（转移，加单引号）。也就是只是在exec时把拼接后的语句发送mysql处理编译，相当于没有使用prepare。</p>
+<p>非模拟预编译时，客户端需要分两次发送1、sql语法结构 2、sql查询参数， 多了一次网络请求开销，但并不会影响性能，因为预编译的过程只发生在第一次请求，一旦编译成功，第二次就能直接使用了，不需要二次编译（是同一Session，即每次请求中的多次调用时只存在一次预编译）。 </p>
+<p>知道这几个基本知识后，开始寻找能进行注入的情况</p>
+<h5 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h5><p>因为数据库的编码设置为GBK所导致单引号的逃逸。</p>
+<p>·在模拟预编译下，pdo对sql注入的防范（PDO::queto（）），是将数字型的注入变为字符型的注入，又用类似于mysql_real_escape_string()的方法将单引号双引号反斜等进行了转义。所以这种在GBK编码时，是可以用宽字节绕过，达成注入的。</p>
+<p>·在非模拟预编译下，会进行两次访问，即使设置了gbk，但mysql会把？绑定的参数转化为16进制，无论输入什么样的东西都无法进入注入了。</p>
+<h5 id="二次注入"><a href="#二次注入" class="headerlink" title="二次注入"></a>二次注入</h5><p>二次注入是由于对添加进数据库中的数据没有再次处理和转义而导致的，而预编译对每次查询都进行转义，则不存在二次注入的情况。 但可以在gbk编码下搭配着宽字节注入进行绕过。</p>
+<h5 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h5><p>开启报错选项后， 可进行报错注入是因为MySQL服务端prepare时报错，然后通过设置PDO::ATTR_ERRMODE将MySQL错误信息打印 </p>
+<p>做几个测试：</p>
+<p>（1）模拟编译下</p>
+<p>开启了报错选项PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION</p>
+<p>参数是直接拼接的（伪pdo）时</p>
+<p><img src="/.com//1.png" alt="1"></p>
+<p>确实报错了并且把user()带出来</p>
+<p>这个参数是用bindParam()方式绑定时</p>
+<p><img src="/.com//2.png" alt="2"></p>
+<p>不会出现报错信息</p>
+<p><img src="/.com//3.png" alt="3"></p>
+<p>关闭报错选项</p>
+<p>参数直接拼接</p>
+<p><img src="/.com//4.png" alt="4"></p>
+<p>也不会有报错</p>
+<p><img src="/.com//pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C5.png" alt="5"></p>
+<p>参数绑定方式更不用说了</p>
+<p>（2）非模拟编译下</p>
+<p>开启报错选项</p>
+<p>参数直接拼接时</p>
+<p><img src="/.com//pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C6.png" alt="6"></p>
+<p>还是会出现报错注入</p>
+<p><img src="/.com//pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C7.png" alt="7"></p>
+<p>但是使用bindparam时就不能了</p>
+<p><img src="/.com//pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C8.png" alt="8"></p>
+<p>综上，只要报错选项开启了，并且参数是使用直接拼接的方式就能使用报错注入。</p>
+<p>（为什么bindParam时，不能进行报错注入呢）</p>
+<h5 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h5><p>在模拟编译下，参数直接拼接时，可以执行，但因为返回结果只会返回一个</p>
+<p>非模拟编译下，不可以，因为会被当成值处理</p>
+<h5 id="使用pdo时需要注意的地方"><a href="#使用pdo时需要注意的地方" class="headerlink" title="使用pdo时需要注意的地方"></a>使用pdo时需要注意的地方</h5><p>1、使用pdo时都使用非模拟处理（虽然 在php5.3.6之后，pdo不会在本地对sql进行拼接然后将拼接后的sql传递给mysql server处理（也就是不会在本地做转义处理），但为了版本兼容还是直接设置好 ）</p>
+<p>2、创建PDO实例时，将PDO：：MYSQL_ATTR_MULTI_STATEMENTS设置为false</p>
+<p>3、查询语句的参数不可以直接拼接，使用?或:id占位符</p>
+<h5 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h5><p><a href="https://xz.aliyun.com/t/3950" target="_blank" rel="noopener">https://xz.aliyun.com/t/3950</a></p>
+<p><a href="https://www.freebuf.com/articles/web/216336.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/web/216336.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/web%E5%AE%89%E5%85%A8/" rel="tag"># web安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/02/17/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%80%BB%E7%BB%93/" rel="next" title="正则表达式总结">
+                <i class="fa fa-chevron-left"></i> 正则表达式总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/iu1.jpeg"
+                alt="J.I" />
+            
+              <p class="site-author-name" itemprop="name">J.I</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么使用pdo预处理能有效的防止sql注入？"><span class="nav-number">1.</span> <span class="nav-text">为什么使用pdo预处理能有效的防止sql注入？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#什么情况下pdo预处理有可能出现问题？"><span class="nav-number">2.</span> <span class="nav-text">什么情况下pdo预处理有可能出现问题？</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#什么是模拟预编译？"><span class="nav-number">2.1.</span> <span class="nav-text">什么是模拟预编译？</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#宽字节注入"><span class="nav-number">3.</span> <span class="nav-text">宽字节注入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二次注入"><span class="nav-number">4.</span> <span class="nav-text">二次注入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#报错注入"><span class="nav-number">5.</span> <span class="nav-text">报错注入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#堆叠注入"><span class="nav-number">6.</span> <span class="nav-text">堆叠注入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用pdo时需要注意的地方"><span class="nav-number">7.</span> <span class="nav-text">使用pdo时需要注意的地方</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考："><span class="nav-number">8.</span> <span class="nav-text">参考：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">J.I</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
