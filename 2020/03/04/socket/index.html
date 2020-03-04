@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="内网渗透," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="问题：socket是什么先回顾一下tcp&#x2F;ip5层协议物理层：主要基于电器特性发送高低电压（电信号），高电压对应数字1，低电压对应数字0 数据链路层：但光知道单纯的0和1没有意义，必须规定电信号多少位一组，每组什么意思，所以数据链路层就是用来定义电信号的分组方式（以太网协议，mac地址，广播） 网络层：世界上有那么多的机器不可能都采用广播的方式，所以引进了局域网的概念，以太网包可以在一个局域网内广">
+<meta name="keywords" content="内网渗透">
+<meta property="og:type" content="article">
+<meta property="og:title" content="socket">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;socket&#x2F;index.html">
+<meta property="og:site_name" content="J.I">
+<meta property="og:description" content="问题：socket是什么先回顾一下tcp&#x2F;ip5层协议物理层：主要基于电器特性发送高低电压（电信号），高电压对应数字1，低电压对应数字0 数据链路层：但光知道单纯的0和1没有意义，必须规定电信号多少位一组，每组什么意思，所以数据链路层就是用来定义电信号的分组方式（以太网协议，mac地址，广播） 网络层：世界上有那么多的机器不可能都采用广播的方式，所以引进了局域网的概念，以太网包可以在一个局域网内广">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;socket&#x2F;1.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;socket&#x2F;2.png">
+<meta property="og:updated_time" content="2020-03-04T14:46:38.629Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;socket&#x2F;1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/04/socket/"/>
+
+
+
+
+
+  <title>socket | J.I</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">J.I</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/04/socket/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="J.I">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/iu1.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="J.I">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">socket</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-04T21:57:22+08:00">
+                2020-03-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="问题：socket是什么"><a href="#问题：socket是什么" class="headerlink" title="问题：socket是什么"></a>问题：socket是什么</h3><h5 id="先回顾一下tcp-ip5层协议"><a href="#先回顾一下tcp-ip5层协议" class="headerlink" title="先回顾一下tcp/ip5层协议"></a>先回顾一下tcp/ip5层协议</h5><p><strong>物理层</strong>：主要基于电器特性发送高低电压（电信号），高电压对应数字1，低电压对应数字0</p>
+<p><strong>数据链路层</strong>：但光知道单纯的0和1没有意义，必须规定电信号多少位一组，每组什么意思，所以数据链路层就是用来定义电信号的分组方式（以太网协议，mac地址，广播）</p>
+<p><strong>网络层</strong>：世界上有那么多的机器不可能都采用广播的方式，所以引进了局域网的概念，以太网包可以在一个局域网内广播，跨局域网的就需要用到路由转发，所以我们还需要一个在网络上的地址，即ip地址出现（arp，ip，子网掩码）</p>
+<p><strong>传输层</strong>：以上解决了发出和接受数据包的主机，但因为一个机器上可以有多个应用程序收发数据包，为解决这个问题，引进了端口概念，每个应用程序规定一个端口，至此，一个数据包的来和去都有唯一的规定了。（tcp,udp）</p>
+<p><strong>应用层</strong>： 用户使用的都是应用程序，均工作于应用层，互联网是开发的，大家都可以开发自己的应用程序，数据多种多样，必须规定好数据的组织形式 。所以应用层就是规定应用程序的数据格式。（ftp，email等）</p>
+<p>我们知道两个进程如果需要进行通讯最基本的一个前提能能够唯一的标示一个进程，在本地进程通讯中我们可以使用PID来唯一标示一个进程，但PID只在本地唯一，网络中的两个进程PID冲突几率很大，这时候我们需要另辟它径了，我们知道IP层的ip地址可以唯一标示主机，而TCP层协议和端口号可以唯一标示主机的一个进程，这样我们可以利用ip地址＋协议＋端口号唯一标示网络中的一个进程。</p>
+<p>能够唯一标示网络中的进程后，它们就可以利用socket进行通信了，<strong>什么是socket？</strong>我们经常把socket翻译为套接字，socket是在应用层和传输层之间的一个抽象层，它把TCP/IP层复杂的操作抽象为几个简单的接口供应用层调用以实现进程在网络中通信。 <strong>在写程序的时候只要调用Socket的接口收发数据，写出来的程序自然就是遵循互联网协议的</strong> </p>
+<img src="/2020/03/04/socket/1.png" alt="1" style="zoom: 67%;">
+
+<p>socket起源于Unix，而Unix/Linux基本哲学之一就是“一切皆文件”，对于文件用【打开】【读写】【关闭】模式来操作。socket就是该模式的一个实现，socket即是一种特殊的文件，一些socket函数就是对其进行的操作（读/写IO、打开、关闭）</p>
+<h6 id="socket和file的区别："><a href="#socket和file的区别：" class="headerlink" title="socket和file的区别："></a><strong>socket和file的区别：</strong></h6><ul>
+<li>file模块是针对某个指定文件进行【打开】【读写】【关闭】</li>
+<li>socket模块是针对 服务器端 和 客户端Socket 进行【打开】【读写】【关闭】</li>
+</ul>
+<h5 id="python-socket接口"><a href="#python-socket接口" class="headerlink" title="python socket接口"></a>python socket接口</h5><p> python中引用套接字的模块是socket，在服务端和客户端间的信息传输中，套接字起到了决定性的作用，因其功能不同共分为三种套接字，一个是<strong>监听套接字</strong>，在服务端负责一直监听着客户端是否有请求发来；一种是<strong>客户端套接字</strong>，负责与服务端建立联系并收发信息；最后一种是<strong>对等连接套接字</strong>，是在服务端和客户端负责收发信息。 </p>
+<p><img src="/2020/03/04/socket/2.png" alt="2"></p>
+<p>(双工即在同一时刻允许数据在两个方向上允许)</p>
+<h6 id="1、socket编程思路"><a href="#1、socket编程思路" class="headerlink" title="1、socket编程思路"></a>1、socket编程思路</h6><p>服务端：</p>
+<ul>
+<li><p>创建套接字，绑定套接字到本地IP与端口（bind）</p>
+</li>
+<li><p>开始监听连接（listen）</p>
+</li>
+<li><p>进入循环，不断接受客户端的连接请求（accept）</p>
+</li>
+<li><p>然后接收传来的数据，并发送给对方数据（recv，send）#传送数据都是以字节流的形式，所以python3传送前需要encode()</p>
+</li>
+<li><p>传输完毕后，关闭套接字（close）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">import socket</span><br><span class="line">server=socket.socket()</span><br><span class="line">server.bind((&apos;127.0.0.1&apos;,1234))</span><br><span class="line">server.listen(5)</span><br><span class="line">while True:</span><br><span class="line">	a,b=server.accept()#a,b接受</span><br><span class="line">	while True:</span><br><span class="line">		mess=a.recv(1024)#1024是最大能接受的字节大小</span><br><span class="line">		if mess:</span><br><span class="line">			print(&quot;客户端传来：%s&quot;%mess)</span><br><span class="line">			a.send(&quot;client hello!&quot;.encode())#str-》字节流用encode</span><br><span class="line">		else:</span><br><span class="line">			a.close()</span><br><span class="line">			break</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>客户端</p>
+<ul>
+<li><p>创建套接字，连接远端地址（connect）#连接成功后，原本的客户端套接字实际上就变成了对等连接套接字 </p>
+</li>
+<li><p>连接后发送数据和接收数据（recv，send）</p>
+</li>
+<li><p>传输完毕后，关闭套接字（close）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">import socket</span><br><span class="line">client=socket.socket()</span><br><span class="line">client.connect((&apos;127.0.0.1&apos;,1234))</span><br><span class="line">mess=input(&quot;input:&quot;).encode()</span><br><span class="line">client.send(mess)#sb = str.encode(s) str to bytes</span><br><span class="line">get=client.recv(1024).decode()</span><br><span class="line">print(&quot;收到server信息：%s&quot;%get)</span><br><span class="line">client.close()</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="2、socket对象详细"><a href="#2、socket对象详细" class="headerlink" title="2、socket对象详细"></a>2、socket对象详细</h6><p>sk = socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)</p>
+<p>参数一：地址簇</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>socket.AF_INET</td>
+<td>IPv4（默认）</td>
+</tr>
+<tr>
+<td>socket.AF_INET6</td>
+<td>IPv6</td>
+</tr>
+<tr>
+<td>ocket.AF_UNIX</td>
+<td>只能够用于单一的Unix系统进程间通信</td>
+</tr>
+</tbody></table>
+<p>参数二：类型</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>socket.SOCK_STREAM</td>
+<td>流式socket , for TCP （默认）</td>
+</tr>
+<tr>
+<td>socket.SOCK_DGRAM</td>
+<td>数据报式socket , for UDP</td>
+</tr>
+<tr>
+<td>socket.SOCK_RAW</td>
+<td>原始套接字，普通的套接字无法处理ICMP、IGMP等网络报文，而SOCK_RAW可以；其次，SOCK_RAW也可以处理特殊的IPv4报文；此外，利用原始套接字，可以通过IP_HDRINCL套接字选项由用户构造IP头。</td>
+</tr>
+<tr>
+<td>socket.SOCK_RDM</td>
+<td>是一种可靠的UDP形式，即保证交付数据报但不保证顺序。SOCK_RAM用来提供对原始协议的低级访问，在需要执行某些特殊操作时使用，如发送ICMP报文。SOCK_RAM通常仅限于高级用户或管理员运行的程序使用。</td>
+</tr>
+<tr>
+<td>socket.SOCK_SEQPACKET</td>
+<td>可靠的连续数据包服务</td>
+</tr>
+</tbody></table>
+<p>参考：</p>
+<p><a href="https://www.cnblogs.com/shizhengquan/p/10133321.html" target="_blank" rel="noopener">https://www.cnblogs.com/shizhengquan/p/10133321.html</a></p>
+<p><a href="https://www.cnblogs.com/csms/p/10117113.html" target="_blank" rel="noopener">https://www.cnblogs.com/csms/p/10117113.html</a></p>
+<p><a href="https://www.cnblogs.com/linhaifeng/articles/5937962.html" target="_blank" rel="noopener">https://www.cnblogs.com/linhaifeng/articles/5937962.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="tag"># 内网渗透</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/04/pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5/" rel="next" title="pdo预处理与sql注入">
+                <i class="fa fa-chevron-left"></i> pdo预处理与sql注入
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/iu1.jpeg"
+                alt="J.I" />
+            
+              <p class="site-author-name" itemprop="name">J.I</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题：socket是什么"><span class="nav-number">1.</span> <span class="nav-text">问题：socket是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#先回顾一下tcp-ip5层协议"><span class="nav-number">1.0.1.</span> <span class="nav-text">先回顾一下tcp/ip5层协议</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#socket和file的区别："><span class="nav-number">1.0.1.1.</span> <span class="nav-text">socket和file的区别：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#python-socket接口"><span class="nav-number">1.0.2.</span> <span class="nav-text">python socket接口</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1、socket编程思路"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">1、socket编程思路</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2、socket对象详细"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">2、socket对象详细</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">J.I</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
