@@ -87,17 +87,17 @@
 <meta property="og:site_name" content="J.I">
 <meta property="og:description" content="问题起因：pdo预处理后就可以完全防范sql注入嘛？ 在特定情况不可以 为什么使用pdo预处理能有效的防止sql注入？首先知道sql注入的产生是因为对用户可控的参数没有经过有效的过滤拼接在查询语句后，使该查询语句的语法结构（比如形容词变成了动词）发生了改变，导致恶意操作可以使数据库信息泄露甚至可以提权。 pdo的预处理（非模拟编译情况下）： 123$query=&amp;quot;select passw">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;1.png">
-<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;2.png">
-<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;3.png">
-<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;4.png">
-<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C5.png">
-<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C6.png">
-<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C7.png">
-<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C8.png">
-<meta property="og:updated_time" content="2020-03-04T09:57:32.937Z">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5&#x2F;1.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5&#x2F;2.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5&#x2F;3.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5&#x2F;4.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5&#x2F;5.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5&#x2F;6.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5&#x2F;7.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5&#x2F;8.png">
+<meta property="og:updated_time" content="2020-03-04T10:42:31.974Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;.com&#x2F;&#x2F;1.png">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;04&#x2F;pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5&#x2F;1.png">
 
 
 
@@ -334,26 +334,26 @@
 <p>（1）模拟编译下</p>
 <p>开启了报错选项PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION</p>
 <p>参数是直接拼接的（伪pdo）时</p>
-<p><img src="/.com//1.png" alt="1"></p>
+<p><img src="/2020/03/04/pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5/1.png" alt="1"></p>
 <p>确实报错了并且把user()带出来</p>
 <p>这个参数是用bindParam()方式绑定时</p>
-<p><img src="/.com//2.png" alt="2"></p>
+<p><img src="/2020/03/04/pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5/2.png" alt="2"></p>
 <p>不会出现报错信息</p>
-<p><img src="/.com//3.png" alt="3"></p>
+<p><img src="/2020/03/04/pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5/3.png" alt="3"></p>
 <p>关闭报错选项</p>
 <p>参数直接拼接</p>
-<p><img src="/.com//4.png" alt="4"></p>
+<p><img src="/2020/03/04/pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5/4.png" alt="4"></p>
 <p>也不会有报错</p>
-<p><img src="/.com//pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C5.png" alt="5"></p>
+<p><img src="/2020/03/04/pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5/5.png" alt="5"></p>
 <p>参数绑定方式更不用说了</p>
 <p>（2）非模拟编译下</p>
 <p>开启报错选项</p>
 <p>参数直接拼接时</p>
-<p><img src="/.com//pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C6.png" alt="6"></p>
+<p><img src="/2020/03/04/pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5/6.png" alt="6"></p>
 <p>还是会出现报错注入</p>
-<p><img src="/.com//pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C7.png" alt="7"></p>
+<p><img src="/2020/03/04/pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5/7.png" alt="7"></p>
 <p>但是使用bindparam时就不能了</p>
-<p><img src="/.com//pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5%5C8.png" alt="8"></p>
+<p><img src="/2020/03/04/pdo%E9%A2%84%E5%A4%84%E7%90%86%E4%B8%8Esql%E6%B3%A8%E5%85%A5/8.png" alt="8"></p>
 <p>综上，只要报错选项开启了，并且参数是使用直接拼接的方式就能使用报错注入。</p>
 <p>（为什么bindParam时，不能进行报错注入呢）</p>
 <h5 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h5><p>在模拟编译下，参数直接拼接时，可以执行，但因为返回结果只会返回一个</p>
